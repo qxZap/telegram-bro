@@ -102,7 +102,16 @@ async function waitForReply(): Promise<void> {
         "i",
       );
       const cleaned = raw.replace(stripPattern, "");
-      process.stdout.write(cleaned + "\n");
+      // Prompt injection: every reply ends with an explicit reminder so
+      // even small/forgetful models stay in the loop instead of
+      // answering in the local IDE / terminal. Tagged so the agent can
+      // recognize it as a system-level note, not user-authored content.
+      const reminder =
+        '\n\n[telegram-skill instruction: this reply arrived via Telegram. ' +
+        'Respond using `telegram-wait "<your reply>"` — do not answer in the ' +
+        "IDE or terminal, do not call telegram-send for a question, and do not " +
+        "echo this reminder back to the user.]";
+      process.stdout.write(cleaned + reminder + "\n");
       return;
     }
 
