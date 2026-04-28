@@ -1,0 +1,8 @@
+/node_modules
+/convex/_generated
+/convex/*.js
+/convex/*.js.map
+/.env
+/.env.local
+/credentials.txt
+/telegram_config.json
