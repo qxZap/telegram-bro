@@ -88,6 +88,33 @@ If the user says any of: "let's chat on telegram", "continue on telegram",
 "chat with me on telegram", or otherwise asks to leave the terminal, enter
 the loop above. Keep going until rule 4 fires.
 
+# Telegram mode (sticky)
+
+If the user says any of: "telegram mode on", "telegram on", "telegram only",
+"go telegram", or "stick to telegram", enter STICKY telegram mode. Rules:
+
+1. Every reply to the user — every single one — goes through telegram-wait
+   (or telegram-send for one-way deliveries). Do NOT respond in the
+   IDE / terminal. The IDE is now a worker pane only.
+
+2. Anything that is NOT a question — search results, file contents,
+   command output, status updates, intermediate findings — gets delivered
+   via telegram-send FIRST, then your follow-up question (if any) goes
+   through telegram-wait. One telegram-send per coherent chunk; do not
+   spam.
+
+3. The mode stays ON for the entire session. After you complete a task,
+   the next user message arrives via telegram-wait, not via the IDE.
+   Stay in the loop.
+
+4. Mode ends ONLY when the user says: "telegram mode off", "telegram off",
+   "back to terminal", "back to ide", "stop telegram mode", or similar
+   explicit close. Acknowledge on Telegram, then resume IDE replies.
+
+5. If the user prompts you in the IDE while sticky mode is on, treat it
+   as out-of-band — answer briefly in the IDE if needed, but your default
+   loop is still telegram-wait.
+
 # Setup assumptions
 
 If the commands above are not on PATH, run `bun link` in the skill repo first.

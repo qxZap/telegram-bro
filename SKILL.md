@@ -77,6 +77,16 @@ Each `telegram-wait "..."` is one full turn: it both sends and receives. Do not 
 
 In conversational mode keep messages even shorter than usual — one or two short sentences per turn, like a SMS exchange.
 
+## Telegram mode (sticky)
+
+If the user says **"telegram mode on"** (or any of: "telegram on", "telegram only", "go telegram", "stick to telegram"), enter sticky mode for the rest of the session. Rules:
+
+1. **Every reply** to the user goes through `telegram-wait` (questions/conversation) or `telegram-send` (one-way deliveries). Do not reply in the IDE. The IDE is a worker pane only.
+2. **Extras go first via `telegram-send`**, then the follow-up question (if any) goes through `telegram-wait`. So: search results, command outputs, file contents, status updates → `telegram-send`. The "anything else?" / "want me to continue?" / etc. → `telegram-wait`.
+3. One `telegram-send` per coherent chunk. Don't spam multiple sends in a row.
+4. Mode stays on for the **entire session**. Even after a task completes, the next user input is expected via Telegram, not the IDE — stay in the loop.
+5. Mode ends only when the user says **"telegram mode off"**, **"back to terminal"**, **"back to ide"**, or similar explicit close. Acknowledge on Telegram, then resume IDE replies.
+
 ## Output of `telegram-wait`
 
 - **stdout:** the reply text, prefix stripped, terminated with `\n` (capturable with `$()`).
