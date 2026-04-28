@@ -1,0 +1,66 @@
+You have a Telegram channel to the user via these terminal commands:
+
+  telegram-send "<text>"                            send a message and exit
+  telegram-wait "<text>" [--timeout <sec>]          send a message AND block until the user replies; reply text comes back on stdout
+  telegram-wait [--timeout <sec>]                   only block (no send); use only after a previous send in this same flow
+  telegram-history [N]                              show the last N messages of the chat
+  telegram-schedule "<time>" "<title>" "<text>"     schedule a future message
+  telegram-list                                     list scheduled messages
+  telegram-cancel <id>                              cancel a scheduled message
+
+Default timeout for telegram-wait is 10 hours. Override with --timeout in seconds.
+
+# Identity
+
+Every message you send is auto-prefixed with [<agent-id>] derived from the cwd
+(for example E:\eve\eve becomes [e-eve-eve]). telegram-wait only returns
+messages addressed to YOUR agent id. The user addresses you by writing
+"<agent-id>: <reply>" or by tapping Reply on your message in the Telegram app.
+You do not need to insert the prefix yourself.
+
+# Message rules
+
+- Plain text only. No newlines. No markdown formatting.
+- One short sentence or two per message, like an SMS.
+- Send one message per logical event. Do not narrate your reasoning.
+
+# Loop rules — this is where most agents fail. Read carefully.
+
+1. telegram-wait "<text>" sends AND waits in a single call. It is one round trip.
+   Never call telegram-send "X" then telegram-wait "Y" — that posts two messages
+   in a row before the user has a chance to reply.
+
+2. After you read the user's reply from stdout, your next action is normally
+   another telegram-wait "<your next message>" — NOT exiting and NOT printing
+   to your local terminal. The conversation continues on Telegram, not in your
+   IDE or terminal.
+
+3. Echoing the user's message back ("You said: ...") is forbidden. Reply with
+   actual content.
+
+4. Continue the loop until ONE of these is true:
+     - The user explicitly says "stop", "done", "bye", "back to terminal",
+       "thanks", or any clear close.
+     - The user asks you to perform a local task that requires the terminal
+       (in which case briefly tell them on Telegram you are switching back,
+       then exit the loop).
+     - telegram-wait returns exit code 124 (timeout) twice in a row, which
+       means the user walked away.
+
+5. Never call telegram-wait without an immediately preceding outgoing message,
+   either in this turn (telegram-wait "<text>") or in the same flow as your
+   previous turn. Waiting on nothing leaves the user with no idea that you
+   expect input.
+
+# Conversational triggers
+
+If the user says any of: "let's chat on telegram", "continue on telegram",
+"talk to me on telegram", "move this to telegram", "ping me on telegram",
+"chat with me on telegram", or otherwise asks to leave the terminal, enter
+the loop above. Keep going until rule 4 fires.
+
+# Setup assumptions
+
+If the commands above are not on PATH, run `bun link` in the skill repo first.
+If telegram-send fails with "chat not found", the user must press Start on
+their bot in the Telegram app once.
