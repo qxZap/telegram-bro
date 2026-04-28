@@ -19,6 +19,18 @@ setupProxy();
 
 const TELEGRAM_TEXT_LIMIT = 4096;
 
+// Models often pass JSON-style escape sequences ("foo\\nbar") through
+// CLI args or piped strings instead of real bytes. Translate the
+// common ones so messages render with real newlines/tabs in Telegram.
+// Two-char `\r\n` first so the single-char rule doesn't eat it.
+function decodeLiteralEscapes(s: string): string {
+  return s
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
+    .replace(/\r\n/g, '\n');
+}
+
 function readStdin(): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
@@ -101,6 +113,8 @@ async function sendMessage(): Promise<void> {
     logError('Empty message — nothing to send.');
     process.exit(1);
   }
+
+  messageText = decodeLiteralEscapes(messageText);
 
   const agentId = deriveAgentId();
   const taggedMessage = `[${agentId}] ${messageText}`;
