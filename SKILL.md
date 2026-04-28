@@ -11,6 +11,9 @@ CLI tools that let any AI assistant message the user on Telegram and pause until
 
 ```
 telegram-send "<text>" ["<file>"]
+telegram-send - ["<file>"]                     # read text from stdin
+echo "<text>" | telegram-send                  # same, via pipe
+telegram-send < message.txt                    # same, via redirect
 telegram-wait ["<prompt>"] [--timeout <sec>] [--poll <sec>]
 telegram-schedule "<time>" "<title>" "<text>" ["<file>"]
 telegram-list
@@ -19,6 +22,14 @@ telegram-history [limit]
 ```
 
 All commands work from any directory once installed.
+
+## Long messages
+
+For anything longer than a couple of sentences, or anything with quotes, URLs, parentheses, or other shell-hostile characters, **pipe via stdin** instead of cramming it into a CLI argument. Windows arg limits are ~8000 chars and quoting URLs is brittle. Stdin has no such limit and no escaping rules.
+
+Telegram's hard limit is 4096 chars per message; `telegram-send` auto-splits longer text at line/word boundaries and prefixes each chunk `[<agent-id>] (i/N) ...` so reply-by-tap still works on any chunk.
+
+File attachments cap at 1024-char captions; if you pass a file, the message text gets truncated to fit. To send a long body with a file, send the body via stdin first (no file), then a separate `telegram-send "<short caption>" <file>`.
 
 ## Agent identity
 
@@ -43,9 +54,10 @@ Anything else stays in `telegram-history` but does not unblock any waiting agent
 
 ## Message rules
 
-- Plain text only. **No newlines.** No Markdown tricks.
-- Keep messages short — Telegram is a phone notification.
-- One message per logical event.
+- Plain text only. No Markdown tricks.
+- In conversational mode, one short message per turn — Telegram is a phone notification, not a blog.
+- For data dumps (lists with URLs, search results, structured info), newlines and longer bodies are fine; pipe via stdin.
+- One message per logical event — don't narrate your reasoning in three messages when one will do.
 - **Never call `telegram-wait` without first firing a message.** Prefer the `telegram-wait "<prompt>"` form (which sends + waits in one call). Bare `telegram-wait` is only valid when you sent a message earlier in the same flow that the user might be replying to. Waiting on nothing is silently broken — the user has no way to know you expect input.
 
 ## Conversational mode
