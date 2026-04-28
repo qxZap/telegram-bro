@@ -46,6 +46,7 @@ Anything else stays in `telegram-history` but does not unblock any waiting agent
 - Plain text only. **No newlines.** No Markdown tricks.
 - Keep messages short — Telegram is a phone notification.
 - One message per logical event.
+- **Never call `telegram-wait` without first firing a message.** Prefer the `telegram-wait "<prompt>"` form (which sends + waits in one call). Bare `telegram-wait` is only valid when you sent a message earlier in the same flow that the user might be replying to. Waiting on nothing is silently broken — the user has no way to know you expect input.
 
 ## Conversational mode
 
