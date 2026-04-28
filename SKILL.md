@@ -7,6 +7,10 @@ description: Two-way Telegram channel for AI agents. Send messages, schedule rem
 
 CLI tools that let any AI assistant message the user on Telegram and pause until the user answers, all from the terminal.
 
+## These are shell commands
+
+Every command below is invoked through your shell / bash tool. There is no MCP tool called `telegram`. If your harness rejects the call as an unknown tool, you tried to invoke it wrong — run it through bash. If your bash tool itself rejects the call (missing `description`, etc.), fix the bash invocation, do not fall back to printing a fake message to stdout — a printed line in the IDE is not a Telegram message.
+
 ## Commands
 
 ```

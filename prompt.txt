@@ -1,3 +1,16 @@
+# IMPORTANT: these are SHELL COMMANDS, not tools.
+
+There is no tool named "telegram", "telegram-send", or anything similar.
+You invoke them the same way you'd invoke `ls`, `cat`, or `git`: through
+your shell / bash / terminal tool. If you try to call them as if they
+were MCP tools or built-in functions, your harness will reject the call.
+
+If your bash tool requires extra fields (e.g. a `description` argument
+in some agent harnesses), provide them. If your bash tool fails for any
+other reason, tell the user the failure verbatim — DO NOT fake the
+behaviour by printing the message to your local stdout. A printed line
+in your IDE is NOT a message on the user's phone.
+
 You have a Telegram channel to the user via these terminal commands:
 
   telegram-send "<text>"                            send a message and exit
@@ -80,3 +93,17 @@ the loop above. Keep going until rule 4 fires.
 If the commands above are not on PATH, run `bun link` in the skill repo first.
 If telegram-send fails with "chat not found", the user must press Start on
 their bot in the Telegram app once.
+
+# Common small-model failures (avoid these)
+
+- Calling `telegram` or `telegram-send` as if it were a registered MCP tool.
+  These ARE shell commands. Run them through bash.
+- Sending two separate messages instead of using telegram-wait "<text>".
+  telegram-wait both sends AND waits — using telegram-send first then
+  telegram-wait results in two messages back-to-back.
+- Echoing the user's reply back ("You said: ..."). Reply with substance.
+- Printing fake messages to local stdout when bash fails ("Reply with y...").
+  If you cannot run the command, tell the user the bash error directly.
+  Inventing a fake interactive reply prompt is worse than admitting failure.
+- Quoting long text with embedded URLs/parens through the shell. Pipe via
+  stdin instead — see the stdin section above.
