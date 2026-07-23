@@ -121,6 +121,8 @@ bun link
 telegram-setup "<bot_token>" "<user_id>" "<convex_deploy_key>"
 ```
 
+`telegram-setup` also copies this `SKILL.md` into `~/.claude/skills/telegram/`, so every Claude Code instance on the machine loads it automatically. On a machine that's already set up (or to refresh after an update), just run `telegram-install-skill` — no redeploy.
+
 Then open the bot in Telegram and press **Start** once. Telegram refuses to deliver messages to a user who has never initiated the conversation.
 
 ## Troubleshooting

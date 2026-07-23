@@ -18,7 +18,8 @@
     "telegram-cancel": "./scripts/cancel_message.ts",
     "telegram-history": "./scripts/view_history.ts",
     "telegram-wait": "./scripts/wait_message.ts",
-    "telegram-setup": "./scripts/setup.ts"
+    "telegram-setup": "./scripts/setup.ts",
+    "telegram-install-skill": "./scripts/install_skill.ts"
   },
   "dependencies": {
     "chrono-node": "^2.9.0",

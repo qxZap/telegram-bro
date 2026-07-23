@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
 
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync, copyFileSync } from 'fs';
+import { resolve } from 'path';
 import { execSync } from 'child_process';
-import { Config, CONFIG_DIR, CONFIG_PATH, SKILL_ROOT, BotInfo } from './types.js';
+import { Config, CONFIG_DIR, CONFIG_PATH, SKILL_ROOT, CLAUDE_SKILL_DIR, BotInfo } from './types.js';
 import { logError, logSuccess, logInfo, logDetail, log } from './logger.js';
 import { setupProxy } from './proxy-util.js';
 
@@ -61,6 +62,10 @@ async function setup(): Promise<void> {
   mkdirSync(CONFIG_DIR, { recursive: true });
   writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
   logDetail(`✓ Config saved to ${CONFIG_PATH}`);
+
+  // Install the skill globally for Claude Code so every instance on this
+  // machine picks it up without per-project copying.
+  installClaudeSkill();
 
   // Step 3: Install dependencies
   logInfo('\n3️⃣', 'Installing dependencies...');
@@ -146,6 +151,20 @@ async function setup(): Promise<void> {
   );
   log('\nMonitor your deployment:');
   log('  → https://dashboard.convex.dev');
+}
+
+function installClaudeSkill(): void {
+  try {
+    mkdirSync(CLAUDE_SKILL_DIR, { recursive: true });
+    copyFileSync(
+      resolve(SKILL_ROOT, 'SKILL.md'),
+      resolve(CLAUDE_SKILL_DIR, 'SKILL.md')
+    );
+    logDetail(`✓ Skill installed for Claude Code at ${CLAUDE_SKILL_DIR}`);
+  } catch (error: any) {
+    // Non-fatal: the CLI tools work regardless; this is only IDE convenience.
+    logDetail(`⚠ Could not install Claude Code skill: ${error.message}`);
+  }
 }
 
 interface TelegramResponse<T = unknown> {

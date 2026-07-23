@@ -70,7 +70,7 @@ Literal `\n`, `\t`, and `\r\n` in the input get decoded to real characters autom
 
 ## Skill files
 
-- [`SKILL.md`](SKILL.md) — drop into a Claude Code skill folder (`~/.claude/skills/telegram/`) or any agent's skill directory. Lists commands and rules. No code logic — pure instructions.
+- [`SKILL.md`](SKILL.md) — drop into a Claude Code skill folder (`~/.claude/skills/telegram/`) or any agent's skill directory. Lists commands and rules. No code logic — pure instructions. `telegram-setup` installs it there automatically; `telegram-install-skill` (re)installs it standalone without redeploying.
 - [`prompt.txt`](prompt.txt) — same content, system-prompt format, for non-Claude AIs (opencode/qwen/etc). Drilled with explicit anti-patterns for small models that confuse skill-name with tool-name.
 
 ## Conversational + sticky modes

@@ -86,6 +86,13 @@ export const CONFIG_DIR = resolve(homedir(), ".claude-telegram");
 export const CONFIG_PATH = resolve(CONFIG_DIR, "config.json");
 
 /**
+ * Claude Code's user-level skills directory. Dropping SKILL.md here makes the
+ * telegram skill available to every Claude Code instance on the machine without
+ * per-project copying.
+ */
+export const CLAUDE_SKILL_DIR = resolve(homedir(), ".claude", "skills", "telegram");
+
+/**
  * Resolve the Convex deployment URL for a loaded config.
  * Prefers the explicit URL captured at setup (includes region), falls back
  * to deriving from the deploy key (region-less — only works for legacy
